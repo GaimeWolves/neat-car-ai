@@ -43,4 +43,4 @@ $ ./bin/CarAI
 
 If build errors about SDL2 and SDL2_gfx occur, install the respective libraries or change the library paths in the CMake files to your custom install locations for SDL2 or SDL2_gfx. Here are links to the libraries:
 - [SDL2](https://www.libsdl.org/index.php)
-- [SDLw_gfx](http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/)
+- [SDL2_gfx](http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/)
