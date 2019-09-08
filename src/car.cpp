@@ -1,5 +1,5 @@
 #include "car.h"
-#include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL2_gfxPrimitives.h>
 #include <vector>
 
 Car::~Car() { }
@@ -28,22 +28,22 @@ void Car::Render(SDL_Renderer* renderer)
 {
 	filledTrigonRGBA(
 		renderer,
-		transformedCarPoints[0].x,
-		transformedCarPoints[0].y,
-		transformedCarPoints[1].x,
-		transformedCarPoints[1].y,
-		transformedCarPoints[2].x,
-		transformedCarPoints[2].y,
+		(Sint16)transformedCarPoints[0].x,
+		(Sint16)transformedCarPoints[0].y,
+		(Sint16)transformedCarPoints[1].x,
+		(Sint16)transformedCarPoints[1].y,
+		(Sint16)transformedCarPoints[2].x,
+		(Sint16)transformedCarPoints[2].y,
 		255, 0, 0, 255);
 
 	filledTrigonRGBA(
 		renderer,
-		transformedCarPoints[0].x,
-		transformedCarPoints[0].y,
-		transformedCarPoints[2].x,
-		transformedCarPoints[2].y,
-		transformedCarPoints[3].x,
-		transformedCarPoints[3].y,
+		(Sint16)transformedCarPoints[0].x,
+		(Sint16)transformedCarPoints[0].y,
+		(Sint16)transformedCarPoints[2].x,
+		(Sint16)transformedCarPoints[2].y,
+		(Sint16)transformedCarPoints[3].x,
+		(Sint16)transformedCarPoints[3].y,
 		255, 0, 0, 255);
 }
 

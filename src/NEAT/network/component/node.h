@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum NodeType
 {
 	Sensor,
@@ -12,4 +14,5 @@ struct Node
 {
 	int index;
 	NodeType type;
+	std::string name; //Used for drawing in sensor and output nodes;
 };

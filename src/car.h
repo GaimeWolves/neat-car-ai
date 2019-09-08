@@ -1,6 +1,6 @@
 #pragma once
 #include "math/vector2d.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 enum CarDirection
 {

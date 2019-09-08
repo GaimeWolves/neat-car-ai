@@ -1,7 +1,8 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
+#include <SDL.h>
+#include <SDL2_gfxPrimitives.h>
 #include <iostream>
 #include <string>
+#include <cfloat>
 
 #include "car.h"
 #include "math/spline.h"
@@ -276,7 +277,7 @@ int main(int argc, char* argv[])
 		Vector2D newPosition = car->GetPosition();
 
 		int index1 = -1, index2 = -1;
-		float distance1 = MAXFLOAT, distance2 = MAXFLOAT;
+		float distance1 = FLT_MAX, distance2 = FLT_MAX;
 
 		for (int i = 0; i < spline.Points.size(); i++)
 		{

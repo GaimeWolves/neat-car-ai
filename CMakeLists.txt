@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.0)
 
 project(CarAI)
 
@@ -38,11 +38,34 @@ add_executable(CarAI
 
 message("Added sources")
 
+add_compile_definitions(USE_SDL2_GFX)
+
+if (UNIX)
 find_package(SDL2 REQUIRED)
 message("SDL2 found")
 
 find_library(SDL2_GFX_LIBRARY SDL2_gfx)
 find_path(SDL2_GFX_INCLUDE SDL2_gfxPrimitives.h PATHS /usr/local/include/SDL2)
+endif (UNIX)
+
+if (WIN32)
+if (${CMAKE_SIZEOF_VOID_P} MATCHES 8)
+	set(SDL2_LIBRARIES "${CMAKE_SOURCE_DIR}/libs/SDL2/x64/SDL2.lib;${CMAKE_SOURCE_DIR}/libs/SDL2/x64/SDL2main.lib")
+	set(SDL2_GFX_LIBRARY "${CMAKE_SOURCE_DIR}/libs/SDL2_gfx/x64/SDL2_gfx.lib")
+
+	file(COPY ${CMAKE_SOURCE_DIR}/libs/SDL2/x64/SDL2.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug/)
+	file(COPY ${CMAKE_SOURCE_DIR}/libs/SDL2_gfx/x64/SDL2_gfx.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug/)
+else ()
+	set(SDL2_LIBRARIES "${CMAKE_SOURCE_DIR}/libs/SDL2/x86/SDL2.lib;${CMAKE_SOURCE_DIR}/libs/SDL2/x86/SDL2main.lib")
+	set(SDL2_GFX_LIBRARY "${CMAKE_SOURCE_DIR}/libs/SDL2_gfx/x86/SDL2_gfx.lib")
+
+	file(COPY ${CMAKE_SOURCE_DIR}/libs/SDL2/x86/SDL2.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug/)
+	file(COPY ${CMAKE_SOURCE_DIR}/libs/SDL2_gfx/x86/SDL2_gfx.dll DESTINATION ${CMAKE_SOURCE_DIR}/bin/Debug/)
+endif()
+
+find_path(SDL2_INCLUDE_DIRS SDL.h PATHS ${CMAKE_SOURCE_DIR}/include/SDL2)
+find_path(SDL2_GFX_INCLUDE SDL2_gfxPrimitives.h PATHS ${CMAKE_SOURCE_DIR}/include/SDL2_gfx)
+endif(WIN32)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_GFX_INCLUDE})
 target_link_libraries(CarAI ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARY})
