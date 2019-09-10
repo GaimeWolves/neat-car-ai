@@ -34,6 +34,8 @@ add_executable(CarAI
 	src/NEAT/utilities/evolver.cpp
 	src/NEAT/utilities/serializer.h
 	src/NEAT/utilities/serializer.cpp
+	src/NEAT/utilities/util.h
+	src/NEAT/utilities/util.cpp
 )
 
 message("Added sources")

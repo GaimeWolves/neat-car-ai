@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <ostream>
 
 enum NodeType
 {
@@ -16,3 +17,5 @@ struct Node
 	NodeType type;
 	std::string name; //Used for drawing in sensor and output nodes;
 };
+
+std::ostream& operator<<(std::ostream&, const Node&);

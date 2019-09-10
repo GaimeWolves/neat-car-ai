@@ -11,3 +11,5 @@ struct Connection
 	bool enabled;
 	int innovation;
 };
+
+std::ostream& operator<<(std::ostream&, const Connection&);

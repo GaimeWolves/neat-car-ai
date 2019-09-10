@@ -3,9 +3,17 @@
 #include <iostream>
 #include <string>
 #include <cfloat>
+#include <ctime>
+#include <cstdlib>
 
 #include "car.h"
 #include "math/spline.h"
+
+#include "NEAT/neat.h"
+#include "NEAT/utilities/mutator.h"
+#include "NEAT/utilities/crossover.h"
+
+NEAT neat = NEAT(3, 2, {"Bias", "X", "Y", "Go", "Stop"}, 5);
 
 Spline spline, borderLeft, borderRight;
 Car* car;
@@ -210,6 +218,8 @@ void HandleInput(SDL_Event event)
 
 int main(int argc, char* argv[])
 {
+	srand(static_cast<unsigned>(time(0)));
+	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cerr << "SDL2 could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
@@ -240,6 +250,22 @@ int main(int argc, char* argv[])
 	UpdatePaths();
 
 	car = new Car(spline.Points[0], spline.GetSplineGradient(0, true).Normalize());
+
+	MutateAddConnection(neat, neat.Networks[0]);
+	MutateAddConnection(neat, neat.Networks[0]);
+	MutateAddConnection(neat, neat.Networks[0]);
+	MutateAddNode(neat, neat.Networks[0]);
+	neat.Networks[0].SetFitness(-10);
+
+	MutateAddConnection(neat, neat.Networks[1]);
+	MutateAddConnection(neat, neat.Networks[1]);
+	MutateAddConnection(neat, neat.Networks[1]);
+	MutateAddNode(neat, neat.Networks[1]);
+	neat.Networks[1].SetFitness(10);
+
+	std::cout << neat.Networks[0] << std::endl;
+	std::cout << neat.Networks[1] << std::endl;
+	std::cout << DoCrossover(neat, neat.Networks[0], neat.Networks[1]) << std::endl;
 
 	bool quit = false;
 	SDL_Event event;
@@ -328,5 +354,6 @@ int main(int argc, char* argv[])
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 
+	std::cin;
 	return 0;
 }
