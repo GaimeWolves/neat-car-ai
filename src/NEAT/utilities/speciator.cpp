@@ -30,7 +30,9 @@ std::vector<Species> SpeciatePopulation(NEAT &neat)
 
 	//Sort population of species by fitness.
 	for (auto s : result)
-		std::sort(s.population.begin(), s.population.end(), [] (Network* const &a, Network* const &b) -> bool { a->GetFitness() < b->GetFitness(); });
+		std::sort(s.population.begin(), s.population.end(), [] (Network* const &a, Network* const &b) -> bool { return a->GetFitness() < b->GetFitness(); });
+
+	return result;
 }
 
 void CalculateSharedFitness(std::vector<Species> &species)
