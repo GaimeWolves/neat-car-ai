@@ -12,7 +12,7 @@ public:
 	void AddConnectionToGlobalPool(Connection connection) { GlobalConnectionGeneList.push_back(connection); }
 	void AddNodeToGlobalPool(Node node) { GlobalNodeGeneList.push_back(node); }
 
-	std::vector<Network> Networks;
+	void DoEvolutionCycle();
 
 	const int GetInputNodeCount() { return inputNodes; }
 	const int GetOutputNodeCount() { return outputNodes; }
@@ -20,8 +20,11 @@ public:
 	const std::vector<Connection>* GetGlobalConnectionList() { return &GlobalConnectionGeneList; }
 	const std::vector<Node>* GetGlobalNodeList() { return &GlobalNodeGeneList; }
 
-	Network CreateStandardNetwork() { return Network(inputNodes, outputNodes, names); }
+	std::vector<Network> Networks;
+	Network CreateStandardNetwork() { return Network(MinWeightValue, MaxWeightvalue, inputNodes, outputNodes, names); }
+	bool DeleteNetwork(Network* network);
 
+	//////NEAT Parameters//////
 	//Must be a positive and negative value.
 	float MinWeightValue = -2;
 	float MaxWeightvalue = 2;
@@ -42,6 +45,7 @@ public:
 	//Used for speciation
 	float distanceThreshold = 3;
 
+	int PopulationSize = 100;
 	int GlobalInnovationCounter = 0;
 
 private:

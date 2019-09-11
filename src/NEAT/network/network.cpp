@@ -1,9 +1,16 @@
 #include "network.h"
 
-Network::Network(int inputNodes, int outputNodes, std::vector<std::string> names)
+#include "../utilities/util.h"
+
+Network::Network(float minWeight, float maxWeight, int inputNodes, int outputNodes, std::vector<std::string> names)
 {
 	for (int i = 0; i < inputNodes + outputNodes; i++)
 		genome.nodeGenes.push_back({i, (i < inputNodes) ? Sensor : Output, names[i]});
+
+	int innovation = 0;
+	for (int i = 0; i < inputNodes; i++)
+		for (int j = 0; j < outputNodes; j++)
+			genome.connectionGenes.push_back({genome.nodeGenes[i], genome.nodeGenes[inputNodes + j], RandomFloat(minWeight, maxWeight), true, ++innovation});
 }
 
 Network::Network()

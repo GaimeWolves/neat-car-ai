@@ -4,11 +4,14 @@
 #include <vector>
 #include <algorithm>
 
+#include <iostream>
+
 Network DoCrossover(NEAT &neat, Network &a, Network &b)
 {
 	int maxInnovationNumber = -1;
 
 	Network result = neat.CreateStandardNetwork();
+	result.GetGenome()->connectionGenes.clear();
 
 	for (auto g : a.GetGenome()->connectionGenes)
 		if (g.innovation > maxInnovationNumber)
@@ -29,25 +32,31 @@ Network DoCrossover(NEAT &neat, Network &a, Network &b)
 		Connection bGene;
 
 		for (auto g : b.GetGenome()->connectionGenes)
+		{
 			if (g.innovation == i)
 			{
 				bHasGene = true;
 				bGene = g;
 				break;
 			}
+		}
 
 		for (auto g : a.GetGenome()->connectionGenes)
+		{
 			if (g.innovation == i)
 			{
 				aHasGene = true;
 				aGene = g;
 				break;
 			}
+		}
 
 		if (aHasGene && bHasGene)
 		{
 			Connection connection = rand() % 2 ? aGene : bGene;
 			connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
+
+			std::cout << "Innovation: " << i << "; Selected gene: " << connection << std::endl;
 
 			result.GetGenome()->connectionGenes.push_back(connection);
 		}

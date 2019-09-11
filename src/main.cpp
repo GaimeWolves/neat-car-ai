@@ -10,8 +10,6 @@
 #include "math/spline.h"
 
 #include "NEAT/neat.h"
-#include "NEAT/utilities/mutator.h"
-#include "NEAT/utilities/crossover.h"
 
 NEAT neat = NEAT(3, 2, {"Bias", "X", "Y", "Go", "Stop"}, 5);
 
@@ -218,8 +216,9 @@ void HandleInput(SDL_Event event)
 
 int main(int argc, char* argv[])
 {
-	srand(static_cast<unsigned>(time(0)));
-	
+	rand();
+	srand(time(nullptr));
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cerr << "SDL2 could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
@@ -243,29 +242,32 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	for (float i = 0; i < 16; i++)
-	{
-		spline.Points.push_back({350 + 200 * (float)sin((i / 16) * 2 * 3.141529), 350 + 200 * (float)cos((i / 16) * 2 * 3.141529)});
-	}
+	spline.Points = {
+		{100, 350}, //Goal/Start
+		{100, 550}, {100, 600}, {105, 625}, {112, 638}, {125, 645}, {150, 650}, {200, 650},	//Curve 1,
+		{475, 650}, //Point for long straight line
+		{750, 650}, {800, 650}, {825, 645}, {838, 638}, {845, 625}, {850, 600}, {850, 550},	//Curve 2,
+					{850, 500}, {845, 475}, {838, 462}, {825, 455}, {800, 450}, {750, 450},	//Curve 3 ...
+								{725, 445}, {712, 438}, {705, 425}, {700, 400}, {700, 350},
+								{705, 325}, {712, 312}, {725, 305}, {750, 300}, {800, 300},
+								{825, 295}, {838, 288}, {845, 275}, {850, 250}, {850, 200},
+					{850, 150}, {845, 125}, {838, 112}, {825, 105}, {800, 100}, {750, 100},
+		{662.5, 075}, {587.5, 125}, {512.5, 075}, {437.5, 125}, {362.5, 075}, {287.5, 125},	//Squiggly line
+		{200, 100}, {150, 100}, {125, 105}, {112, 112}, {105, 125}, {100, 150}, {100, 200}	//Last curve
+		};
 	UpdatePaths();
 
 	car = new Car(spline.Points[0], spline.GetSplineGradient(0, true).Normalize());
 
-	MutateAddConnection(neat, neat.Networks[0]);
-	MutateAddConnection(neat, neat.Networks[0]);
-	MutateAddConnection(neat, neat.Networks[0]);
-	MutateAddNode(neat, neat.Networks[0]);
-	neat.Networks[0].SetFitness(-10);
+	for (int i = 0; i < 10; i++)
+	{
+		for (auto n : neat.Networks)
+			n.SetFitness(rand() & 100);
 
-	MutateAddConnection(neat, neat.Networks[1]);
-	MutateAddConnection(neat, neat.Networks[1]);
-	MutateAddConnection(neat, neat.Networks[1]);
-	MutateAddNode(neat, neat.Networks[1]);
-	neat.Networks[1].SetFitness(10);
+		neat.DoEvolutionCycle();
+	}
 
 	std::cout << neat.Networks[0] << std::endl;
-	std::cout << neat.Networks[1] << std::endl;
-	std::cout << DoCrossover(neat, neat.Networks[0], neat.Networks[1]) << std::endl;
 
 	bool quit = false;
 	SDL_Event event;

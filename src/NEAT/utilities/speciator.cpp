@@ -25,12 +25,12 @@ std::vector<Species> SpeciatePopulation(NEAT &neat)
 		}
 
 		if (!inserted)
-			result.push_back({{&network}, NAN, 0});
+			result.push_back({{&network}, 0, 0, 0});
 	}
 
-	//Sort population of species by fitness.
+	//Sort population of species by fitness (lowest to highest).
 	for (auto s : result)
-		std::sort(s.population.begin(), s.population.end(), [] (Network* const &a, Network* const &b) -> bool { return a->GetFitness() < b->GetFitness(); });
+		std::sort(s.population.begin(), s.population.end(), [] (Network* const &a, Network* const &b) -> bool { return a->GetFitness() > b->GetFitness(); });
 
 	return result;
 }
@@ -39,7 +39,7 @@ void CalculateSharedFitness(std::vector<Species> &species)
 {
 	for (auto s : species)
 	{
-		float sharedFitness;
+		float sharedFitness = 0;
 		for (auto network : s.population)
 			sharedFitness += network->GetFitness() / s.population.size();
 
@@ -47,9 +47,9 @@ void CalculateSharedFitness(std::vector<Species> &species)
 	}
 }
 
-void DoReproductionCycle(NEAT &neat, std::vector<Species> &species)
+void DoKillCycle(NEAT &neat, std::vector<Species> &species)
 {
-	float sumSharedFitness;
+	float sumSharedFitness = 0;
 	for (auto s : species)
 		sumSharedFitness += s.sharedFitness;
 	
@@ -59,18 +59,21 @@ void DoReproductionCycle(NEAT &neat, std::vector<Species> &species)
 
 		if (species[i].population.size() == 1)
 		{
-			//TODO: Remove from neat.Networks vector
-			species.erase(species.begin() + i);
-		}
-		else if (species[i].population.size() == 2 && species[i].score < 0.5f)
-		{
-			//TODO: Remove from neat.Networks vector
-			species.erase(species.begin() + i);
+			neat.DeleteNetwork(species[i].population[0]);
+			species.erase(species.begin() + i--);
 		}
 		else
 		{
-			species[i].killed = std::round(species[i].population.size() * species[i].score);
+			species[i].killed = std::round(neat.PopulationSize * species[i].score * 0.5f);
+
+			for (int j = 0; j < species[i].killed; j++)
+			{
+				neat.DeleteNetwork(species[i].population[0]);
+				species[i].population.erase(species[i].population.begin());
+			}
+
+			if (species[i].population.size() == 0)
+				species.erase(species.begin() + i--);
 		}
-		
 	}
 }

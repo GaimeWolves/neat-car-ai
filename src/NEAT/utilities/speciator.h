@@ -12,4 +12,4 @@ struct Species
 
 std::vector<Species> SpeciatePopulation(NEAT &neat);
 void CalculateSharedFitness(std::vector<Species> &species);
-void DoReproductionCycle(NEAT &neat, std::vector<Species> &species);
+void DoKillCycle(NEAT &neat, std::vector<Species> &species);

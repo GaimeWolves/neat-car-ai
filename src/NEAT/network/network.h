@@ -7,7 +7,7 @@
 class Network
 {
 public:
-	Network(int inputNodes, int outputNodes, std::vector<std::string> names);
+	Network(float minWeight, float maxWeight, int inputNodes, int outputNodes, std::vector<std::string> names);
 	Network();
 
 	Genome* GetGenome() { return &genome; }
