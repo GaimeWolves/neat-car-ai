@@ -1,4 +1,4 @@
-#include "genome.h"
+#include "genome.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -13,9 +13,9 @@ std::vector<Node> DeduceNodesFromConnections(Genome genome)
 		bool addOut = true;
 		for (auto n : deducedNodes)
 		{
-			if (n.index == g.in.index)
+			if (n.index == g.in->index)
 				addIn = false;
-			else if (n.index == g.out.index)
+			else if (n.index == g.out->index)
 				addOut = false;
 
 			if (!addIn && !addOut)
@@ -23,10 +23,16 @@ std::vector<Node> DeduceNodesFromConnections(Genome genome)
 		}
 
 		if (addIn)
-			deducedNodes.push_back(g.in);
+		{
+			deducedNodes.push_back(*g.in);
+			g.in = &deducedNodes[deducedNodes.size() - 1];
+		}
 
 		if (addOut)
-			deducedNodes.push_back(g.out);
+		{
+			deducedNodes.push_back(*g.out);
+			g.out = &deducedNodes[deducedNodes.size() - 1];
+		}
 	}
 
 	return deducedNodes;
@@ -35,7 +41,7 @@ std::vector<Node> DeduceNodesFromConnections(Genome genome)
 bool HasConnection(Node a, Node b, Genome genome)
 {
 	for (auto connection : genome.connectionGenes)
-		if ((connection.in.index == a.index && connection.out.index == b.index) || (connection.in.index == b.index && connection.out.index == a.index))
+		if ((connection.in->index == a.index && connection.out->index == b.index) || (connection.in->index == b.index && connection.out->index == a.index))
 			return true;
 	return false;
 }

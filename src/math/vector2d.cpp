@@ -1,4 +1,4 @@
-#include "vector2d.h"
+#include "vector2d.hpp"
 
 Vector2D FromAngle(float r)
 {

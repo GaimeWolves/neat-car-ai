@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../network/network.h"
-#include "../neat.h"
+#include "../network/network.hpp"
+#include "../neat.hpp"
 
 Network DoCrossover(NEAT &neat, Network &a, Network &b);
 

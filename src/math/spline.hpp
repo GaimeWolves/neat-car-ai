@@ -4,7 +4,7 @@
 #include <math.h>
 #include <iostream>
 
-#include "vector2d.h"
+#include "vector2d.hpp"
 
 struct Spline
 {

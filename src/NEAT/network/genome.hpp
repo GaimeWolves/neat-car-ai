@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "component/connection.h"
-#include "component/node.h"
+#include "component/connection.hpp"
+#include "component/node.hpp"
 
 struct Genome
 {

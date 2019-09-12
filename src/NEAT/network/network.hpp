@@ -1,7 +1,10 @@
 #pragma once
 
-#include "genome.h"
+#include "genome.hpp"
 #include <ostream>
+
+#include <vector>
+#include <string>
 
 //Represents a network or phenotype.
 class Network
@@ -16,6 +19,11 @@ public:
 	void SetFitness(float value) { fitness = value; }
 	float GetFitness() { return fitness; }
 
+	float GetOutput(std::string name);
+	void SetInput(std::string name, float value);
+
+	void Propagate();
+
 #ifdef USE_SDL2_GFX
 	void RenderNetwork(int x, int y, int width, int height);
 #endif
@@ -23,6 +31,9 @@ public:
 private:
 	Genome genome;
 	float fitness;
+
+	std::vector<Node*> input;
+	std::vector<Node*> output;
 
 	friend std::ostream& operator<<(std::ostream&, const Network&);
 };

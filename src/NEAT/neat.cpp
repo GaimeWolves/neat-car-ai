@@ -1,8 +1,10 @@
-#include "neat.h"
+#include "neat.hpp"
 
-#include "utilities/evolver.h"
+#include "utilities/evolver.hpp"
+#include "utilities/debug.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <iostream>
 
 NEAT::NEAT(int inputNodes, int outputNodes, std::vector<std::string> names, int population)
@@ -46,12 +48,15 @@ void NEAT::DoEvolutionCycle()
 {
 	for (auto network : Networks)
 	{
-		if (network.GetFitness() == NAN)
+		if (network.GetFitness() == std::numeric_limits<float>::quiet_NaN())
 		{
 			std::cerr << "WARNING: Network has no fitness value set stopping evolution cycle!" << std::endl << "Affected network: " << network << std::endl;
 			return;
 		}
 	}
 
+	PrintGenerationInfo(*this);
+
 	StepEvolution(*this);
+	generation++;
 }

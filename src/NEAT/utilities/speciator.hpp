@@ -1,4 +1,4 @@
-#include "../neat.h"
+#include "../neat.hpp"
 
 #include <vector>
 

@@ -1,5 +1,5 @@
-#include "../network/network.h"
-#include "../neat.h"
+#include "../network/network.hpp"
+#include "../neat.hpp"
 
 void MutateNetwork(NEAT &neat, Network &network);
 

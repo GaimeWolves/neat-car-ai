@@ -2,6 +2,7 @@
 
 #include <string>
 #include <ostream>
+#include <vector>
 
 enum NodeType
 {
@@ -15,7 +16,10 @@ struct Node
 {
 	int index;
 	NodeType type;
-	std::string name; //Used for drawing in sensor and output nodes;
+	std::string name; 	//Used for drawing in sensor and output nodes;
+	float value;		//Saves the current node value
 };
+
+bool operator==(const Node& a, const Node& b);
 
 std::ostream& operator<<(std::ostream&, const Node&);

@@ -8,39 +8,41 @@ message("Set variables")
 
 add_executable(CarAI
 	src/main.cpp
-	src/math/spline.h
-	src/car.h
+	src/math/spline.hpp
+	src/car.hpp
 	src/car.cpp
-	src/math/vector2d.h
+	src/math/vector2d.hpp
 	src/math/vector2d.cpp
 
-	src/NEAT/neat.h
+	src/NEAT/neat.hpp
 	src/NEAT/neat.cpp
-	src/NEAT/network/network.h
+	src/NEAT/network/network.hpp
 	src/NEAT/network/network.cpp
-	src/NEAT/network/genome.h
+	src/NEAT/network/genome.hpp
 	src/NEAT/network/genome.cpp
-	src/NEAT/network/component/node.h
+	src/NEAT/network/component/node.hpp
 	src/NEAT/network/component/node.cpp
-	src/NEAT/network/component/connection.h
+	src/NEAT/network/component/connection.hpp
 	src/NEAT/network/component/connection.cpp
-	src/NEAT/utilities/mutator.h
+	src/NEAT/utilities/mutator.hpp
 	src/NEAT/utilities/mutator.cpp
-	src/NEAT/utilities/speciator.h
+	src/NEAT/utilities/speciator.hpp
 	src/NEAT/utilities/speciator.cpp
-	src/NEAT/utilities/crossover.h
+	src/NEAT/utilities/crossover.hpp
 	src/NEAT/utilities/crossover.cpp
-	src/NEAT/utilities/evolver.h
+	src/NEAT/utilities/evolver.hpp
 	src/NEAT/utilities/evolver.cpp
-	src/NEAT/utilities/serializer.h
+	src/NEAT/utilities/serializer.hpp
 	src/NEAT/utilities/serializer.cpp
-	src/NEAT/utilities/util.h
+	src/NEAT/utilities/util.hpp
 	src/NEAT/utilities/util.cpp
+	src/NEAT/utilities/debug.hpp
+	src/NEAT/utilities/debug.cpp
 )
 
 message("Added sources")
 
-add_compile_definitions(USE_SDL2_GFX)
+add_definitions(-DUSE_SDL2_GFX)
 
 if (UNIX)
 find_package(SDL2 REQUIRED)

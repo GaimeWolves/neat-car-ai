@@ -1,5 +1,5 @@
 #pragma once
-#include "math/vector2d.h"
+#include "math/vector2d.hpp"
 #include <SDL.h>
 
 enum CarDirection

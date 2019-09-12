@@ -6,12 +6,12 @@
 #include <ctime>
 #include <cstdlib>
 
-#include "car.h"
-#include "math/spline.h"
+#include "car.hpp"
+#include "math/spline.hpp"
 
-#include "NEAT/neat.h"
+#include "NEAT/neat.hpp"
 
-NEAT neat = NEAT(3, 2, {"Bias", "X", "Y", "Go", "Stop"}, 5);
+NEAT neat = NEAT(3, 1, {"Bias", "A", "B", "O"}, 100);
 
 Spline spline, borderLeft, borderRight;
 Car* car;
@@ -258,6 +258,12 @@ int main(int argc, char* argv[])
 	UpdatePaths();
 
 	car = new Car(spline.Points[0], spline.GetSplineGradient(0, true).Normalize());
+
+	neat.Networks[0].SetInput("Bias", -1);
+	neat.Networks[0].SetInput("A", 0);
+	neat.Networks[0].SetInput("B", 1);
+	neat.Networks[0].Propagate();
+	std::cout << neat.Networks[0].GetOutput("O");
 
 	for (int i = 0; i < 10; i++)
 	{

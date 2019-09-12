@@ -1,11 +1,12 @@
-#include "evolver.h"
+#include "evolver.hpp"
 
 #include <vector>
 #include <cstdlib>
+#include <limits>
 
-#include "mutator.h"
-#include "crossover.h"
-#include "speciator.h"
+#include "mutator.hpp"
+#include "crossover.hpp"
+#include "speciator.hpp"
 
 void StepEvolution(NEAT &neat)
 {
@@ -13,8 +14,8 @@ void StepEvolution(NEAT &neat)
 	CalculateSharedFitness(speciesVector);
 	DoKillCycle(neat, speciesVector);
 
-	for (auto network : neat.Networks)
-		MutateNetwork(neat, network);
+	for (int i = 0; i < neat.Networks.size(); i++)
+		MutateNetwork(neat, neat.Networks[i]);
 
 	for (auto species : speciesVector)
 	{
@@ -34,5 +35,5 @@ void StepEvolution(NEAT &neat)
 	}
 
 	for (auto network : neat.Networks)
-		network.SetFitness(NAN); //Reset fitness
+		network.SetFitness(std::numeric_limits<float>::quiet_NaN());
 }

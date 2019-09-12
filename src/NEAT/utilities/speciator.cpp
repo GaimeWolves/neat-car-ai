@@ -1,6 +1,6 @@
-#include "speciator.h"
+#include "speciator.hpp"
 
-#include "crossover.h"
+#include "crossover.hpp"
 
 #include <cstdlib>
 #include <algorithm>
@@ -10,22 +10,22 @@ std::vector<Species> SpeciatePopulation(NEAT &neat)
 {
 	std::vector<Species> result;
 
-	for (auto network : neat.Networks)
+	for (int i = 0; i < neat.Networks.size(); i++)
 	{
 		bool inserted = false;
 		for (auto species : result)
 		{
 			int index = rand() % species.population.size();
-			if (DistanceFunction(neat, network, *species.population[index]) < neat.distanceThreshold)
+			if (DistanceFunction(neat, neat.Networks[i], *species.population[index]) < neat.distanceThreshold)
 			{
 				inserted = true;
-				species.population.push_back(&network);
+				species.population.push_back(&neat.Networks[i]);
 				break;
 			}
 		}
 
 		if (!inserted)
-			result.push_back({{&network}, 0, 0, 0});
+			result.push_back({{&neat.Networks[i]}, 0, 0, 0});
 	}
 
 	//Sort population of species by fitness (lowest to highest).

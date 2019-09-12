@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../neat.h"
+#include "../neat.hpp"
 
 void StepEvolution(NEAT &neat);

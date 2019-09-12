@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "network/network.h"
+#include "network/network.hpp"
 
 class NEAT
 {
@@ -23,6 +23,8 @@ public:
 	std::vector<Network> Networks;
 	Network CreateStandardNetwork() { return Network(MinWeightValue, MaxWeightvalue, inputNodes, outputNodes, names); }
 	bool DeleteNetwork(Network* network);
+
+	int GetGeneration() { return generation; }
 
 	//////NEAT Parameters//////
 	//Must be a positive and negative value.
@@ -48,11 +50,14 @@ public:
 	int PopulationSize = 100;
 	int GlobalInnovationCounter = 0;
 
+	bool debug = true;
+
 private:
 	int inputNodes;
 	int outputNodes;
 
 	int population;
+	int generation;
 
 	std::vector<std::string> names;
 

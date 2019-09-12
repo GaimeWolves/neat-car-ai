@@ -1,12 +1,12 @@
 #pragma once
 
-#include "node.h"
+#include "node.hpp"
 
 //Represents a connection gene
 struct Connection
 {
-	Node in;
-	Node out;
+	Node* in;
+	Node* out;
 	float weight;
 	bool enabled;
 	int innovation;

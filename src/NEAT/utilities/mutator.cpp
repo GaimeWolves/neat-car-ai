@@ -1,5 +1,5 @@
-#include "mutator.h"
-#include "util.h"
+#include "mutator.hpp"
+#include "util.hpp"
 #include <algorithm>
 
 #include <iostream>
@@ -142,7 +142,7 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 			int actualInnovation = -1;
 			for (auto c : *neat.GetGlobalConnectionList())
 			{
-				if (c.in.index == in && c.out.index == out)
+				if (c.in->index == in && c.out->index == out)
 				{
 					actualInnovation = c.innovation;
 					break;
@@ -150,8 +150,8 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 			}
 
 			Connection connection = {
-				genome->nodeGenes[in],
-				genome->nodeGenes[out],
+				&genome->nodeGenes[in],
+				&genome->nodeGenes[out],
 				RandomFloat(neat.MinWeightValue, neat.MaxWeightvalue),
 				true,
 				actualInnovation == -1 ? ++neat.GlobalInnovationCounter : actualInnovation
@@ -180,14 +180,14 @@ void MutateAddNode(NEAT &neat, Network &network)
 	genome->nodeGenes.push_back({(int)genome->nodeGenes.size(), Hidden});
 	genome->connectionGenes.push_back({
 		genome->connectionGenes[index].in,
-		genome->nodeGenes[genome->nodeGenes.size() - 1],
+		&genome->nodeGenes[genome->nodeGenes.size() - 1],
 		1,
 		true,
 		++neat.GlobalInnovationCounter
 	});
 
 	genome->connectionGenes.push_back({
-		genome->nodeGenes[genome->nodeGenes.size() - 1],
+		&genome->nodeGenes[genome->nodeGenes.size() - 1],
 		genome->connectionGenes[index].out,
 		genome->connectionGenes[index].weight,
 		true,
