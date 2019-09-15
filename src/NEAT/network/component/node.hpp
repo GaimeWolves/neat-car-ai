@@ -21,5 +21,6 @@ struct Node
 };
 
 bool operator==(const Node& a, const Node& b);
+bool operator!=(const Node& a, const Node& b);
 
 std::ostream& operator<<(std::ostream&, const Node&);

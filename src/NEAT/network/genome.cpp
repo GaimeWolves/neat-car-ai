@@ -3,9 +3,9 @@
 #include <iostream>
 #include <sstream>
 
-std::vector<Node> DeduceNodesFromConnections(Genome genome)
+std::vector<Node*> DeduceNodesFromConnections(Genome &genome)
 {
-	std::vector<Node> deducedNodes = genome.nodeGenes;
+	std::vector<Node*> deducedNodes = genome.nodeGenes;
 
 	for (auto g : genome.connectionGenes)
 	{
@@ -13,9 +13,9 @@ std::vector<Node> DeduceNodesFromConnections(Genome genome)
 		bool addOut = true;
 		for (auto n : deducedNodes)
 		{
-			if (n.index == g.in->index)
+			if (n->index == g.in->index)
 				addIn = false;
-			else if (n.index == g.out->index)
+			else if (n->index == g.out->index)
 				addOut = false;
 
 			if (!addIn && !addOut)
@@ -24,14 +24,14 @@ std::vector<Node> DeduceNodesFromConnections(Genome genome)
 
 		if (addIn)
 		{
-			deducedNodes.push_back(*g.in);
-			g.in = &deducedNodes[deducedNodes.size() - 1];
+			deducedNodes.push_back(g.in);
+			//g.in = &deducedNodes[deducedNodes.size() - 1];
 		}
 
 		if (addOut)
 		{
-			deducedNodes.push_back(*g.out);
-			g.out = &deducedNodes[deducedNodes.size() - 1];
+			deducedNodes.push_back(g.out);
+			//g.out = &deducedNodes[deducedNodes.size() - 1];
 		}
 	}
 
@@ -46,11 +46,26 @@ bool HasConnection(Node a, Node b, Genome genome)
 	return false;
 }
 
+bool operator==(const Genome &a, const Genome &b)
+{
+	for (auto cA : a.connectionGenes)
+		for(auto cB : b.connectionGenes)
+			if (cA != cB)
+				return false;
+
+	for (auto nA : a.nodeGenes)
+		for(auto nB : b.nodeGenes)
+			if (nA != nB)
+				return false;
+	
+	return true;
+}
+
 std::ostream& operator<<(std::ostream& strm, const Genome& genome)
 {
 	std::stringstream nodeGenes;
 	for (auto n : genome.nodeGenes)
-		nodeGenes << "    " << n << "," << std::endl;
+		nodeGenes << "    " << *n << "," << std::endl;
 	std::string nodeGenesString = nodeGenes.str();
 
 	std::stringstream connectionGenes;

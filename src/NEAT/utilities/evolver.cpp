@@ -10,30 +10,54 @@
 
 void StepEvolution(NEAT &neat)
 {
-	std::vector<Species> speciesVector = SpeciatePopulation(neat);
-	CalculateSharedFitness(speciesVector);
-	DoKillCycle(neat, speciesVector);
+	std::vector<Species> species = SpeciatePopulation(neat);
+	CalculateSharedFitness(species);
+	DoKillCycle(neat, species);
 
-	for (int i = 0; i < neat.Networks.size(); i++)
-		MutateNetwork(neat, neat.Networks[i]);
-
-	for (auto species : speciesVector)
+	for (int i = 0; i < species.size(); i++)
 	{
-		while (species.killed-- > 0)
+		while (species[i].killed-- > 0)
 		{
-			int parentA = rand() % species.population.size();
+			int parentA = rand() % species[i].population.size();
 			int parentB = 0;
+			Network* parentBNetwork;
 
-			do
+			if (species[i].population.size() > 1)
 			{
-				int parentB = rand() % species.population.size();
-			} while (parentB == parentA);
+				do
+				{
+					parentB = rand() % species[i].population.size();
+				} while (parentB == parentA);
 
-			Network network = DoCrossover(neat, *species.population[parentA], *species.population[parentB]);
+				parentBNetwork = species[i].population[parentB];
+			}
+			else
+			{
+				int next = (i + 1) % species.size();
+				parentBNetwork = species[next].population[rand() % species[next].population.size()];
+			}
+
+			Network* network = DoCrossover(neat, *species[i].population[parentA], *parentBNetwork);
+			MutateNetwork(neat, *network);
 			neat.Networks.push_back(network);
 		}
 	}
 
+	while(neat.Networks.size() < neat.PopulationSize)
+	{
+		int parentA = rand() % neat.Networks.size();
+		int parentB = 0;
+
+		do
+		{
+			parentB = rand() % neat.Networks.size();
+		} while (parentB == parentA);
+
+		Network* network = DoCrossover(neat, *neat.Networks[parentA], *neat.Networks[parentB]);
+		MutateNetwork(neat, *network);
+		neat.Networks.push_back(network);
+	}
+
 	for (auto network : neat.Networks)
-		network.SetFitness(std::numeric_limits<float>::quiet_NaN());
+		network->SetFitness(0);
 }

@@ -10,20 +10,20 @@ static float Activation(Genome &genome, Node* node);
 Network::Network(float minWeight, float maxWeight, int inputNodes, int outputNodes, std::vector<std::string> names)
 {
 	for (int i = 0; i < inputNodes + outputNodes; i++)
-		genome.nodeGenes.push_back({i, (i < inputNodes) ? Sensor : Output, names[i]});
+		genome.nodeGenes.push_back(new Node {i, (i < inputNodes) ? Sensor : Output, names[i]});
 
 	for (int i = 0; i < genome.nodeGenes.size(); i++)
 	{
-		if (genome.nodeGenes[i].type == Sensor)
-			input.push_back(&genome.nodeGenes[i]);
-		else if (genome.nodeGenes[i].type == Output)
-			output.push_back(&genome.nodeGenes[i]);
+		if (genome.nodeGenes[i]->type == Sensor)
+			input.push_back(genome.nodeGenes[i]);
+		else if (genome.nodeGenes[i]->type == Output)
+			output.push_back(genome.nodeGenes[i]);
 	}
 
 	int innovation = 0;
 	for (int i = 0; i < inputNodes; i++)
 		for (int j = 0; j < outputNodes; j++)
-			genome.connectionGenes.push_back({&genome.nodeGenes[i], &genome.nodeGenes[inputNodes + j], RandomFloat(minWeight, maxWeight), true, ++innovation});
+			genome.connectionGenes.push_back({genome.nodeGenes[i], genome.nodeGenes[inputNodes + j], RandomFloat(minWeight, maxWeight), true, ++innovation});
 }
 
 Network::Network()
@@ -78,6 +78,11 @@ void Network::RenderNetwork(int x, int y, int width, int height)
 
 }
 #endif
+
+bool operator==(const Network &a, const Network &b)
+{
+	return a.fitness == b.fitness && a.genome == b.genome;
+}
 
 std::ostream& operator<<(std::ostream &strm, const Network &network) 
 {

@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cmath>
 
+constexpr float e = 2.71828182845904523536028747135266249775724709369995957496696762772407663;
+
 float RandomFloat()
 {
 	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
@@ -20,5 +22,5 @@ float RandomFloat(float min, float max)
 
 float sigmoid(float t)
 {
-	return 1 / (1 + pow(M_E, -t));
+	return 1 / (1 + pow(e, -t));
 }

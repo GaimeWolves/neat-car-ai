@@ -6,12 +6,12 @@
 
 #include <iostream>
 
-Network DoCrossover(NEAT &neat, Network &a, Network &b)
+Network* DoCrossover(NEAT &neat, Network &a, Network &b)
 {
 	int maxInnovationNumber = -1;
 
-	Network result = neat.CreateStandardNetwork();
-	result.GetGenome()->connectionGenes.clear();
+	Network* result = neat.CreateStandardNetwork();
+	result->GetGenome()->connectionGenes.clear();
 
 	for (auto g : a.GetGenome()->connectionGenes)
 		if (g.innovation > maxInnovationNumber)
@@ -51,47 +51,47 @@ Network DoCrossover(NEAT &neat, Network &a, Network &b)
 			}
 		}
 
+		if (!aHasGene && !bHasGene)
+			continue;
+
+		Connection connection;
+
 		if (aHasGene && bHasGene)
 		{
-			Connection connection = rand() % 2 ? aGene : bGene;
-			connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
-
-			std::cout << "Innovation: " << i << "; Selected gene: " << connection << std::endl;
-
-			result.GetGenome()->connectionGenes.push_back(connection);
+			connection = rand() % 2 ? aGene : bGene;
 		}
 		else if (a.GetFitness() == b.GetFitness())
 		{
 			if (rand() % 2)
-			{
-				Connection connection = aHasGene ? aGene : bGene;
-				connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
-				result.GetGenome()->connectionGenes.push_back(connection);
-			}
+				connection = aHasGene ? aGene : bGene;
 		}
 		else if (a.GetFitness() > b.GetFitness())
 		{
 			if (aHasGene)
-			{
-				Connection connection = aGene;
-				connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
-				result.GetGenome()->connectionGenes.push_back(connection);
-			}
+				connection = aGene;
 		}
 		else if (a.GetFitness() < b.GetFitness())
 		{
 			if (bHasGene)
-			{
-				Connection connection = bGene;
-				connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
-				result.GetGenome()->connectionGenes.push_back(connection);
-			}
+				connection = bGene;
 		}
+
+		connection.enabled = rand() % 4 ? connection.enabled : true; //specified chance of enabling connection otherwise inherit if enabled
+
+		for (int j = 0; j < result->GetGenome()->nodeGenes.size(); j++)
+		{
+			if (connection.in->index == result->GetGenome()->nodeGenes[j]->index)
+				connection.in = result->GetGenome()->nodeGenes[j];
+			else if (connection.out->index == result->GetGenome()->nodeGenes[j]->index)
+				connection.out = result->GetGenome()->nodeGenes[j];
+		}
+
+		result->GetGenome()->connectionGenes.push_back(connection);
 	}
 
-	std::vector<Node> nodes = DeduceNodesFromConnections(*result.GetGenome());
+	std::vector<Node*> nodes = DeduceNodesFromConnections(*result->GetGenome());
 
-	result.GetGenome()->nodeGenes = nodes;
+	result->GetGenome()->nodeGenes = nodes;
 
 	return result;
 }
@@ -152,7 +152,7 @@ float DistanceFunction(NEAT &neat, Network &a, Network &b)
 			sharedWeightNum++;
 			sharedweightSum += (aGene.weight - bGene.weight);
 		}
-		else
+		else if (aHasGene || bHasGene)
 		{
 			if (aHasGene)
 			{

@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 std::vector<Species> SpeciatePopulation(NEAT &neat)
 {
@@ -13,58 +14,69 @@ std::vector<Species> SpeciatePopulation(NEAT &neat)
 	for (int i = 0; i < neat.Networks.size(); i++)
 	{
 		bool inserted = false;
-		for (auto species : result)
+		for (int j = 0; j < result.size(); j++)
 		{
-			int index = rand() % species.population.size();
-			if (DistanceFunction(neat, neat.Networks[i], *species.population[index]) < neat.distanceThreshold)
+			int index = rand() % result[j].population.size();
+			if (DistanceFunction(neat, *neat.Networks[i], *result[j].population[index]) < neat.distanceThreshold)
 			{
 				inserted = true;
-				species.population.push_back(&neat.Networks[i]);
+				result[j].population.push_back(neat.Networks[i]);
 				break;
 			}
 		}
 
 		if (!inserted)
-			result.push_back({{&neat.Networks[i]}, 0, 0, 0});
+			result.push_back({{neat.Networks[i]}, 0, 0, 0});
 	}
 
 	//Sort population of species by fitness (lowest to highest).
-	for (auto s : result)
-		std::sort(s.population.begin(), s.population.end(), [] (Network* const &a, Network* const &b) -> bool { return a->GetFitness() > b->GetFitness(); });
+	for (int i = 0; i < result.size(); i++)
+		std::sort(result[i].population.begin(), result[i].population.end(), [] (Network* const &a, Network* const &b) -> bool { return a->GetFitness() > b->GetFitness(); });
 
 	return result;
 }
 
 void CalculateSharedFitness(std::vector<Species> &species)
 {
-	for (auto s : species)
+	for (int i = 0; i < species.size(); i++)
 	{
 		float sharedFitness = 0;
-		for (auto network : s.population)
-			sharedFitness += network->GetFitness() / s.population.size();
+		for (auto network : species[i].population)
+			sharedFitness += network->GetFitness() / species[i].population.size();
 
-		s.sharedFitness = sharedFitness;
+		species[i].sharedFitness = sharedFitness;
 	}
 }
 
-void DoKillCycle(NEAT &neat, std::vector<Species> &species)
+void DoKillCycle(NEAT &neat, std::vector<Species> &species) //Killcount may vary depending on the score distribution
 {
-	float sumSharedFitness = 0;
+	float maxFitness = -std::numeric_limits<float>::max();
+	float minFitness = std::numeric_limits<float>::max();
 	for (auto s : species)
-		sumSharedFitness += s.sharedFitness;
-	
+	{
+		if (s.sharedFitness > maxFitness)
+			maxFitness = s.sharedFitness;
+		if (s.sharedFitness < minFitness)
+			minFitness = s.sharedFitness;
+	}
+
+	float maxDistance = sqrt(pow(maxFitness - minFitness, 2));
+
 	for (int i = 0; i < species.size(); i++)
 	{
-		species[i].score = species[i].sharedFitness / sumSharedFitness;
+		species[i].score = maxDistance == 0 ? 1 : 1 - sqrt(pow(maxFitness - species[i].sharedFitness, 2)) / maxDistance;
 
-		if (species[i].population.size() == 1)
+		if (species[i].population.size() == 1 && species[i].score == 1)
 		{
 			neat.DeleteNetwork(species[i].population[0]);
 			species.erase(species.begin() + i--);
 		}
 		else
 		{
-			species[i].killed = std::round(neat.PopulationSize * species[i].score * 0.5f);
+			species[i].killed = std::round(neat.Networks.size() * species[i].score * 0.5f);
+
+			if (species[i].killed > species[i].population.size())
+				species[i].killed -= species[i].killed - (int)species[i].population.size();
 
 			for (int j = 0; j < species[i].killed; j++)
 			{

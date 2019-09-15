@@ -30,10 +30,11 @@ public:
 
 private:
 	Genome genome;
-	float fitness;
+	float fitness = 0;
 
 	std::vector<Node*> input;
 	std::vector<Node*> output;
 
 	friend std::ostream& operator<<(std::ostream&, const Network&);
+	friend bool operator==(const Network &a, const Network &b);
 };

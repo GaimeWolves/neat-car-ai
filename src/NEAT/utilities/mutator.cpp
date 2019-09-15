@@ -97,17 +97,17 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 
 		std::vector<int> checkedNodes;
 		checkedNodes.push_back(nodeA);
-		if (genome->nodeGenes[nodeA].type == Sensor)
+		if (genome->nodeGenes[nodeA]->type == Sensor)
 		{
 			for (auto node : genome->nodeGenes)
-				if (node.type == Sensor)
-					checkedNodes.push_back(node.index);
+				if (node->type == Sensor)
+					checkedNodes.push_back(node->index);
 		}
-		else if (genome->nodeGenes[nodeA].type == Output)
+		else if (genome->nodeGenes[nodeA]->type == Output)
 		{
 			for (auto node : genome->nodeGenes)
-				if (node.type == Output)
-					checkedNodes.push_back(node.index);
+				if (node->type == Output)
+					checkedNodes.push_back(node->index);
 		}
 
 		bool foundPair = false;
@@ -123,7 +123,7 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 					nodeB = tmp;
 			}
 
-			if (HasConnection(genome->nodeGenes[nodeA], genome->nodeGenes[nodeB], *genome))
+			if (HasConnection(*genome->nodeGenes[nodeA], *genome->nodeGenes[nodeB], *genome))
 				checkedNodes.push_back(nodeB);
 			else
 			{
@@ -134,7 +134,7 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 
 		if (foundPair)
 		{
-			bool flip = genome->nodeGenes[nodeA].type == Output || genome->nodeGenes[nodeB].type == Sensor;
+			bool flip = genome->nodeGenes[nodeA]->type == Output || genome->nodeGenes[nodeB]->type == Sensor;
 
 			int in = flip ? nodeB : nodeA;
 			int out = flip ? nodeA : nodeB;
@@ -150,8 +150,8 @@ bool MutateAddConnection(NEAT &neat, Network &network)
 			}
 
 			Connection connection = {
-				&genome->nodeGenes[in],
-				&genome->nodeGenes[out],
+				genome->nodeGenes[in],
+				genome->nodeGenes[out],
 				RandomFloat(neat.MinWeightValue, neat.MaxWeightvalue),
 				true,
 				actualInnovation == -1 ? ++neat.GlobalInnovationCounter : actualInnovation
@@ -177,17 +177,17 @@ void MutateAddNode(NEAT &neat, Network &network)
 	Genome* genome = network.GetGenome();
 	int index = rand() % genome->connectionGenes.size();
 	genome->connectionGenes[index].enabled = false;
-	genome->nodeGenes.push_back({(int)genome->nodeGenes.size(), Hidden});
+	genome->nodeGenes.push_back(new Node {(int)genome->nodeGenes.size(), Hidden});
 	genome->connectionGenes.push_back({
 		genome->connectionGenes[index].in,
-		&genome->nodeGenes[genome->nodeGenes.size() - 1],
+		genome->nodeGenes[genome->nodeGenes.size() - 1],
 		1,
 		true,
 		++neat.GlobalInnovationCounter
 	});
 
 	genome->connectionGenes.push_back({
-		&genome->nodeGenes[genome->nodeGenes.size() - 1],
+		genome->nodeGenes[genome->nodeGenes.size() - 1],
 		genome->connectionGenes[index].out,
 		genome->connectionGenes[index].weight,
 		true,

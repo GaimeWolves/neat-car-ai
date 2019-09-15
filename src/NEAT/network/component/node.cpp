@@ -7,6 +7,11 @@ bool operator==(const Node& a, const Node& b)
 	return a.index == b.index && a.name == b.name && a.type == b.type && a.value == b.value;
 }
 
+bool operator!=(const Node& a, const Node& b)
+{
+	return !(a == b);
+}
+
 std::ostream& operator<<(std::ostream &strm, const Node &node)
 {
 	std::string type;

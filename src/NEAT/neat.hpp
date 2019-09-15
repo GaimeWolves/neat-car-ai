@@ -10,7 +10,6 @@ public:
 	NEAT(int inputNodes, int outputNodes, std::vector<std::string> names, int population);
 
 	void AddConnectionToGlobalPool(Connection connection) { GlobalConnectionGeneList.push_back(connection); }
-	void AddNodeToGlobalPool(Node node) { GlobalNodeGeneList.push_back(node); }
 
 	void DoEvolutionCycle();
 
@@ -18,10 +17,9 @@ public:
 	const int GetOutputNodeCount() { return outputNodes; }
 
 	const std::vector<Connection>* GetGlobalConnectionList() { return &GlobalConnectionGeneList; }
-	const std::vector<Node>* GetGlobalNodeList() { return &GlobalNodeGeneList; }
 
-	std::vector<Network> Networks;
-	Network CreateStandardNetwork() { return Network(MinWeightValue, MaxWeightvalue, inputNodes, outputNodes, names); }
+	std::vector<Network*> Networks;
+	Network* CreateStandardNetwork() { return new Network(MinWeightValue, MaxWeightvalue, inputNodes, outputNodes, names); }
 	bool DeleteNetwork(Network* network);
 
 	int GetGeneration() { return generation; }
@@ -61,6 +59,5 @@ private:
 
 	std::vector<std::string> names;
 
-	std::vector<Node> GlobalNodeGeneList;
 	std::vector<Connection> GlobalConnectionGeneList;
 };

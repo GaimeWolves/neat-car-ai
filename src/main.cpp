@@ -259,21 +259,24 @@ int main(int argc, char* argv[])
 
 	car = new Car(spline.Points[0], spline.GetSplineGradient(0, true).Normalize());
 
-	neat.Networks[0].SetInput("Bias", -1);
-	neat.Networks[0].SetInput("A", 0);
-	neat.Networks[0].SetInput("B", 1);
-	neat.Networks[0].Propagate();
-	std::cout << neat.Networks[0].GetOutput("O");
-
-	for (int i = 0; i < 10; i++)
+	neat.debug = true;
+	while (true)
 	{
-		for (auto n : neat.Networks)
-			n.SetFitness(rand() & 100);
+		int a = rand() % 2;
+		int b = rand() % 2;
+		int o = !a != !b; //xor
 
+		for (int i = 0; i < neat.Networks.size(); i++)
+		{
+			neat.Networks[i]->SetInput("A", a);
+			neat.Networks[i]->SetInput("B", b);
+			neat.Networks[i]->SetInput("Bias", -1);
+			neat.Networks[i]->Propagate();
+			neat.Networks[i]->SetFitness((float)-sqrt(pow(o - neat.Networks[i]->GetOutput("O"), 2)));
+		}
 		neat.DoEvolutionCycle();
+		system("PAUSE");
 	}
-
-	std::cout << neat.Networks[0] << std::endl;
 
 	bool quit = false;
 	SDL_Event event;
